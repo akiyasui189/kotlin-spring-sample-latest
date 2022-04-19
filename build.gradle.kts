@@ -41,6 +41,8 @@ dependencies {
 	implementation("org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j")
 	implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
 	implementation("org.springframework.cloud:spring-cloud-stream")
+	implementation("org.springframework.cloud:spring-cloud-starter-stream-kafka")
+	implementation("org.springframework.cloud:spring-cloud-starter-stream-kafka")
 	implementation("org.springframework.cloud:spring-cloud-starter-netflix-hystrix:${property("hystrixVersion")}")
 	// http client for open feign
 	implementation("io.github.openfeign:feign-okhttp")

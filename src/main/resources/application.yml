@@ -1,0 +1,66 @@
+management:
+  endpoints:
+    web:
+      base-path: "/"
+      exposure:
+        include:
+          - health
+          - info
+          - prometheus
+          #- mapping
+  server:
+    port: ${PORT:8080}
+spring:
+  application:
+    name: "kotlin-spring-sample-latest"
+  profiles:
+    active: ${PROFILES:local}
+  cloud:
+    stream:
+      bindings:
+        simple-message-event:
+          binder: kafka
+          contentType: text/plain
+          destination: ${STREAM_SIMPLE_MESSAGE_DEST:sample.simple.message}
+          group: main
+          consumer:
+            concurrency: 1
+            maxAttempts: 3
+            backOffInitialInterval: 2000
+            backOffMaxInterval: 10000
+            backOffMultiplier: 2.0
+            defaultRetryable: true
+        simple-message-event-dlq:
+          binder: kafka
+          contentType: text/plain
+          destination: ${STREAM_SIMPLE_MESSAGE_DEST:sample.simple.message}.dlq
+          group: main
+          consumer:
+            concurrency: 1
+            maxAttempts: 3
+            backOffInitialInterval: 2000
+            backOffMaxInterval: 10000
+            backOffMultiplier: 2.0
+            defaultRetryable: true
+      # kafka setting
+      default-binder: "kafka"
+      kafka:
+        binder:
+          autoCreateTopics: true
+          autoAddPartitions: false
+          brokers: ${KAFKA_BROKERS:localhost}
+          defaultBrokerPort: ${KAFKA_BROKER_PORT:9092}
+        bindings:
+          # DLQ settings
+          simple-message-event:
+            consumer:
+              enableDlq: true
+              dlqName: ${STREAM_SIMPLE_MESSAGE_DEST:sample.simple.message}.dlq
+          simple-message-event-dlq:
+            consumer:
+              enableDlq: false
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_MASTER_URL:jdbc:mysql://localhost:3306/sample}
+    username: ${DB_MASTER_URL:user}
+    password: ${DB_MASTER_URL:pass}
