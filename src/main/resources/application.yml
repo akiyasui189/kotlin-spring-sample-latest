@@ -17,11 +17,80 @@ spring:
     active: ${PROFILES:local}
   cloud:
     stream:
+      function:
+        # see: https://spring.pleiades.io/spring-cloud-stream/docs/current/reference/html/spring-cloud-stream.html#_overview
+        autodetect: false
+        definition: mqSimpleMessageProcessor;mqSimpleMessageConsumer
+        #definition: mqSimpleMessageConsumer
+        #bindings:
+        #  mqSimpleMessageConsumer-in-0: simple-message-event
+        #  mqSimpleMessageProducer-ou t-0: simple-message-event
       bindings:
-        simple-message-event:
+        # producer
+        mqSimpleMessageProducer-out-0:
+          #binder: kafka
+          #contentType: text/plain
+          #contentType: application/json
+          destination: ${STREAM_SIMPLE_MESSAGE_DEST:sample.simple.message}
+          #group: main
+        # processor
+        mqSimpleMessageProcessor-in-0:
+          destination: ${STREAM_SIMPLE_MESSAGE_DEST:sample.simple.message}
+          group: main
+          #consumer:
+          #  concurrency: 1
+          #  maxAttempts: 3
+          #  backOffInitialInterval: 2000
+          #  backOffMaxInterval: 10000
+          #  backOffMultiplier: 2.0
+          #  defaultRetryable: true
+        mqSimpleMessageProcessor-out-0:
+          destination: ${STREAM_SIMPLE_MESSAGE_DEST:sample.simple.message.processor}
+          #group: main
+        # consumer
+        mqSimpleMessageConsumer-in-0:
+          #binder: kafka
+          #contentType: text/plain
+          contentType: application/json
+          #destination: ${STREAM_SIMPLE_MESSAGE_DEST:sample.simple.message}
+          destination: ${STREAM_SIMPLE_MESSAGE_DEST:sample.simple.message.processor}
+          group: main
+          #consumer:
+          #  concurrency: 1
+          #  maxAttempts: 3
+          #  backOffInitialInterval: 2000
+          #  backOffMaxInterval: 10000
+          #  backOffMultiplier: 2.0
+          #  defaultRetryable: true
+        #simple-message-event:
+        #  binder: kafka
+        #  contentType: text/plain
+        #  destination: ${STREAM_SIMPLE_MESSAGE_DEST:sample.simple.message.deprecated}
+        #  group: main
+        #  consumer:
+        #    concurrency: 1
+        #    maxAttempts: 3
+        #    backOffInitialInterval: 2000
+        #    backOffMaxInterval: 10000
+        #    backOffMultiplier: 2.0
+        #    defaultRetryable: true
+        #simple-message-event-dlq:
+        #  binder: kafka
+        #  contentType: text/plain
+        #  destination: ${STREAM_SIMPLE_MESSAGE_DEST:sample.simple.message}.dlq
+        #  group: main
+        #  consumer:
+        #    concurrency: 1
+        #    maxAttempts: 3
+        #    backOffInitialInterval: 2000
+        #    backOffMaxInterval: 10000
+        #    backOffMultiplier: 2.0
+        #    defaultRetryable: true
+        # deprecated
+        dep-simple-message-event:
           binder: kafka
           contentType: text/plain
-          destination: ${STREAM_SIMPLE_MESSAGE_DEST:sample.simple.message}
+          destination: ${STREAM_SIMPLE_MESSAGE_DEST:sample.simple.message.deprecated}
           group: main
           consumer:
             concurrency: 1
@@ -30,10 +99,11 @@ spring:
             backOffMaxInterval: 10000
             backOffMultiplier: 2.0
             defaultRetryable: true
-        simple-message-event-dlq:
+        # deprecated
+        dep-simple-message-event-dlq:
           binder: kafka
           contentType: text/plain
-          destination: ${STREAM_SIMPLE_MESSAGE_DEST:sample.simple.message}.dlq
+          destination: ${STREAM_SIMPLE_MESSAGE_DEST:sample.simple.message.deprecated}.dlq
           group: main
           consumer:
             concurrency: 1
@@ -43,20 +113,35 @@ spring:
             backOffMultiplier: 2.0
             defaultRetryable: true
       # kafka setting
-      default-binder: "kafka"
+      #default-binder: "kafka"
       kafka:
         binder:
           autoCreateTopics: true
           autoAddPartitions: false
           brokers: ${KAFKA_BROKERS:localhost}
-          defaultBrokerPort: ${KAFKA_BROKER_PORT:9092}
+          defaultBrokerPort: ${KAFKA_DEFAULT_PORT:9092}
         bindings:
-          # DLQ settings
-          simple-message-event:
+          mqSimpleMessageProcessor-in-0:
             consumer:
-              enableDlq: true
-              dlqName: ${STREAM_SIMPLE_MESSAGE_DEST:sample.simple.message}.dlq
-          simple-message-event-dlq:
+              enableDlq: false
+          mqSimpleMessageConsumer-in-0:
+            consumer:
+              enableDlq: false
+          #simple-message-event:
+          #  consumer:
+          #    enableDlq: true
+          #    dlqName: ${STREAM_SIMPLE_MESSAGE_DEST:sample.simple.message}.dlq
+          #simple-message-event-dlq:
+          #  consumer:
+          #    enableDlq: false
+          # deprecated
+          dep-simple-message-event:
+            consumer:
+              enableDlq: false
+              #enableDlq: true
+              #dlqName: ${STREAM_SIMPLE_MESSAGE_DEST:sample.simple.message.deprecated}.dlq
+          # deprecated
+          dep-simple-message-event-dlq:
             consumer:
               enableDlq: false
   datasource:

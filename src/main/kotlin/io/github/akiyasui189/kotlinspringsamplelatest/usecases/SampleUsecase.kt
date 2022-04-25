@@ -9,8 +9,14 @@ class SampleUsecase (
     val service: SampleService
 ) {
 
-    @Transactional
+    //@Transactional
     fun postSimpleMessage(message: String) {
         service.postSimpleMessage(message)
+    }
+
+    // FIXME: use deprecated implementations
+    //@Transactional
+    fun postSimpleMessageDeprecated(message: String) {
+        service.postSimpleMessageDeprecated(message)
     }
 }

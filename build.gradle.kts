@@ -5,6 +5,7 @@ plugins {
 	id("io.spring.dependency-management") version "1.0.11.RELEASE"
 	kotlin("jvm") version "1.6.10"
 	kotlin("plugin.spring") version "1.6.10"
+	jacoco
 }
 
 group = "io.github.akiyasui189"
@@ -16,6 +17,7 @@ repositories {
 }
 
 extra["springCloudVersion"] = "2021.0.1"
+extra["springCloudFunctionVersion"] = "3.2.3"
 extra["hystrixVersion"] = "2.2.10.RELEASE"
 extra["mybatisVersion"] = "2.2.2"
 extra["groovyVersion"] = "3.0.10"
@@ -42,8 +44,9 @@ dependencies {
 	implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
 	implementation("org.springframework.cloud:spring-cloud-stream")
 	implementation("org.springframework.cloud:spring-cloud-starter-stream-kafka")
-	implementation("org.springframework.cloud:spring-cloud-starter-stream-kafka")
 	implementation("org.springframework.cloud:spring-cloud-starter-netflix-hystrix:${property("hystrixVersion")}")
+	// spring cloud function
+	implementation("org.springframework.cloud:spring-cloud-function-kotlin")
 	// http client for open feign
 	implementation("io.github.openfeign:feign-okhttp")
 	implementation("io.github.openfeign:feign-hc5")
@@ -53,12 +56,13 @@ dependencies {
 	implementation("org.flywaydb:flyway-core")
 	implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:${property("mybatisVersion")}")
 	runtimeOnly("mysql:mysql-connector-java")
-	// nosql
+	// redis
 	implementation("redis.clients:jedis")
 	// monitoring
 	implementation("io.micrometer:micrometer-registry-prometheus")
 	// test (include junit5)
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation("org.springframework.cloud:spring-cloud-stream-test-support")
 	// groovy
 	testImplementation("org.codehaus.groovy:groovy-all:${property("groovyVersion")}")
 	//testImplementation("org.apache.groovy:groovy:${property("groovyVersion")}")
@@ -70,6 +74,8 @@ dependencies {
 dependencyManagement {
 	imports {
 		mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
+		// add for CVE-2022-22963
+		mavenBom("org.springframework.cloud:spring-cloud-function-dependencies:${property("springCloudFunctionVersion")}")
 	}
 }
 
@@ -82,4 +88,17 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+tasks.test {
+	finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
+}
+
+tasks.jacocoTestReport {
+	dependsOn(tasks.test) // tests are required to run before generating the report
+	reports {
+		xml.required.set(false)
+		csv.required.set(false)
+		html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
+	}
 }

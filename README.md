@@ -23,3 +23,9 @@ Latest Version
 - Spock Framework
   - 2.1
 
+
+FYI
+---
+
+- [processing messages with spring cloud stream and kafka](https://blog.avenuecode.com/processing-messages-with-spring-cloud-stream-and-kafka)
+  - [sample code](https://github.com/henriquels25/spring-cloud-stream-sample)

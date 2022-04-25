@@ -6,6 +6,7 @@ import org.springframework.messaging.MessageChannel
 
 interface SimpleMessageOutputChannel {
 
+    // TODO: Annotation base implementation deprecated.
     @Output(MessageQueueConstants.SIMPLE_MESSAGE_EVENT)
     fun publishSimpleMessage(): MessageChannel
 

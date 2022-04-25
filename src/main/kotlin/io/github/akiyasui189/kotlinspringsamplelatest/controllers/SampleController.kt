@@ -17,11 +17,20 @@ class SampleController (
 ) {
 
     @PostMapping(
-        path = ["/simple/message"],
+        path = ["/v2/simple/message/"],
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
-    fun postMessage (@RequestBody @Valid requestBody: SampleSimpleMessageRequest) : ResponseEntity<String> {
+    fun postSimpleMessage (@RequestBody @Valid requestBody: SampleSimpleMessageRequest) : ResponseEntity<String> {
         usecase.postSimpleMessage(requestBody.message ?: return ResponseEntity.badRequest().body("NG"))
+        return ResponseEntity.ok("OK")
+    }
+
+    @PostMapping(
+        path = ["/v1/simple/message/"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    fun postSimpleMessageDeprecated (@RequestBody @Valid requestBody: SampleSimpleMessageRequest) : ResponseEntity<String> {
+        usecase.postSimpleMessageDeprecated(requestBody.message ?: return ResponseEntity.badRequest().body("NG"))
         return ResponseEntity.ok("OK")
     }
 

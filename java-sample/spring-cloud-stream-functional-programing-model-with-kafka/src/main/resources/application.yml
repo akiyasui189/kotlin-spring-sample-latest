@@ -1,0 +1,36 @@
+spring:
+  cloud:
+    stream:
+      function:
+        autodetect: false
+        definition: mqProcessor;mqConsumer
+      bindings:
+        # producer
+        mqProducer-out-0:
+          destination: demo-topic-processor
+        # processor
+        mqProcessor-in-0:
+          destination: demo-topic-processor
+          group: default
+        # processor
+        mqProcessor-out-0:
+          destination: demo-topic-consumer
+        # consumer
+        mqConsumer-in-0:
+          destination: demo-topic-consumer
+          group: default
+      kafka:
+        binder:
+          autoCreateTopics: true
+          autoAddPartitions: false
+          brokers: ${KAFKA_BROKERS:localhost}
+          defaultBrokerPort: ${KAFKA_DEFAULT_PORT:9092}
+        bindings:
+          # processor
+          mqProcessor-in-0:
+            consumer:
+              enableDlq: false
+          # consumer
+          mqConsumer-in-0:
+            consumer:
+              enableDlq: false
