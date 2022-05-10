@@ -1,10 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	id("org.springframework.boot") version "2.6.6"
+	// FIXME: occurred error.
+	//id("org.springframework.boot") version "3.0.0-M2"
+	//id("org.springframework.boot") version "2.6.6"
 	id("io.spring.dependency-management") version "1.0.11.RELEASE"
-	kotlin("jvm") version "1.6.10"
-	kotlin("plugin.spring") version "1.6.10"
+	kotlin("jvm") version "1.6.20-RC2"
+	kotlin("plugin.spring") version "1.6.20-RC2"
 	jacoco
 }
 
@@ -14,16 +16,19 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
 	mavenCentral()
+	maven { url = uri("https://repo.spring.io/milestone") }
 }
 
-extra["springCloudVersion"] = "2021.0.1"
-extra["springCloudFunctionVersion"] = "3.2.3"
+extra["springBootVersion"] = "3.0.0-M2"
+//extra["springCloudVersion"] = "2021.0.1"
+extra["springCloudVersion"] = "2022.0.0-M2"
+//extra["springCloudFunctionVersion"] = "3.2.3"
 extra["hystrixVersion"] = "2.2.10.RELEASE"
 extra["mybatisVersion"] = "2.2.2"
-extra["groovyVersion"] = "3.0.10"
-//extra["groovyVersion"] = "4.0.1"
-extra["spockVersion"] = "2.1-groovy-3.0"
-//extra["spockVersion"] = "2.2-M1-groovy-4.0"
+//extra["groovyVersion"] = "3.0.10"
+extra["groovyVersion"] = "4.0.1"
+//extra["spockVersion"] = "2.1-groovy-3.0"
+extra["spockVersion"] = "2.2-M1-groovy-4.0"
 
 dependencies {
 	// kotlin
@@ -54,6 +59,7 @@ dependencies {
 	//implementation("org.springframework.retry:spring-retry")
 	// database
 	implementation("org.flywaydb:flyway-core")
+	implementation("org.flywaydb:flyway-mysql")
 	implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:${property("mybatisVersion")}")
 	runtimeOnly("mysql:mysql-connector-java")
 	// redis
@@ -62,10 +68,10 @@ dependencies {
 	implementation("io.micrometer:micrometer-registry-prometheus")
 	// test (include junit5)
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("org.springframework.cloud:spring-cloud-stream-test-support")
+	//testImplementation("org.springframework.cloud:spring-cloud-stream-test-support")
 	// groovy
-	testImplementation("org.codehaus.groovy:groovy-all:${property("groovyVersion")}")
-	//testImplementation("org.apache.groovy:groovy:${property("groovyVersion")}")
+	//testImplementation("org.codehaus.groovy:groovy-all:${property("groovyVersion")}")
+	testImplementation("org.apache.groovy:groovy:${property("groovyVersion")}")
 	// spock
 	testImplementation("org.spockframework:spock-core:${property("spockVersion")}")
 	testImplementation("org.spockframework:spock-spring:${property("spockVersion")}")
@@ -73,9 +79,10 @@ dependencies {
 
 dependencyManagement {
 	imports {
+		mavenBom("org.springframework.boot:spring-boot-dependencies:${property("springBootVersion")}")
 		mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
 		// add for CVE-2022-22963
-		mavenBom("org.springframework.cloud:spring-cloud-function-dependencies:${property("springCloudFunctionVersion")}")
+		//mavenBom("org.springframework.cloud:spring-cloud-function-dependencies:${property("springCloudFunctionVersion")}")
 	}
 }
 
