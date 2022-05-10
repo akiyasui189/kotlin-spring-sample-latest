@@ -4,7 +4,7 @@ import io.github.akiyasui189.kotlinspringsamplelatest.infrastructures.SimpleMess
 import io.github.akiyasui189.kotlinspringsamplelatest.infrastructures.SimpleMessageOutputChannel
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
-import org.springframework.cloud.stream.annotation.EnableBinding
+//import org.springframework.cloud.stream.annotation.EnableBinding
 
 // TODO: Annotation base implementation deprecated.
 // does not work consumer by functional programing model if use `@EnableBinding`
